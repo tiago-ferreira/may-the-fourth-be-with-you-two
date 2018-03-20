@@ -19,3 +19,29 @@ E a camada responsavel por disponibilizar as servicos Rest para que outras aplic
 
 ## Banco de Dados
 Como banco de daods foi utlizado o Mongo
+
+## Executar
+
+- mvn clean install
+- docker-compose up -d
+
+A aplicação irá iniciar em http://localhost:8089
+
+## Servicos para explorar
+
+GET /user
+
+POST /user
+
+PUT /user
+
+DELETE /user
+
+Exemplo de Json para fazer um POST
+{
+"id":"U01",
+"fullName":"Tiago Ferreira",
+"email":"si.tiagoferreira@gmail.com",
+"birthday":"1991-11-13",
+"heartTeamId":"HT01"
+}
