@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+  may-the-fourth-be-with-you-two:
+    build:
+      dockerfile: ./src/docker/Dockerfile
+      context: .
+    image: may-the-fourth-be-with-you-two
+    container_name: may-the-fourth-be-with-you-two
+    working_dir: /opt/app
+    ports:
+      - "8089:8089"
+    networks:
+      - may-the-fourth-be-with-you-two-network
+    depends_on:
+      - "may-the-fourth-be-with-you-two-mongo"
+  may-the-fourth-be-with-you-two-mongo:
+    image: mongo
+    container_name: may-the-fourth-be-with-you-two-mongo
+    command: mongod --port 27018
+    ports:
+      - "27018:27018"
+    networks:
+      - may-the-fourth-be-with-you-two-network
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+networks:
+  may-the-fourth-be-with-you-two-network:
+    driver: bridge
