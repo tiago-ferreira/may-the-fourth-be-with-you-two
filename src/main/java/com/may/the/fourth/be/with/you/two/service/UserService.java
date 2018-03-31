@@ -1,5 +1,6 @@
 package com.may.the.fourth.be.with.you.two.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,34 +17,29 @@ import com.may.the.fourth.be.with.you.two.repository.UserRepository;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private Environment environment;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
 
 	public void save(User user) {
-		String uri = environment.getProperty("uri.service.campaign") + user.getHeartTeamId();
-		ResponseEntity<List<Campaign>> rateResponse =
-		        restTemplate.exchange(uri,
-		                    HttpMethod.GET, null, new ParameterizedTypeReference<List<Campaign>>() {
-		            });
-		List<Campaign> campaigns = rateResponse.getBody();
+		List<Campaign> campaigns = findCampignsByHeartTeam(user);
 		user.setCampaigns(campaigns);
 		userRepository.save(user);
 	}
-	
+
 	public User read(String id) {
 		return userRepository.findById(id).orElse(null);
 	}
-	
+
 	public void delete(String id) {
 		User user = read(id);
-		if(user != null) {
+		if (user != null) {
 			userRepository.delete(user);
 		}
 	}
@@ -51,9 +47,23 @@ public class UserService {
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
-	
+
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 	
+	private List<Campaign> findCampignsByHeartTeam(User user) {
+		List<Campaign> campaigns = new ArrayList<>();
+		try {
+			String uri = environment.getProperty("uri.service.campaign") + user.getHeartTeamId();
+			ResponseEntity<List<Campaign>> rateResponse = restTemplate.exchange(uri, HttpMethod.GET, null,
+					new ParameterizedTypeReference<List<Campaign>>() {
+					});
+			campaigns = rateResponse.getBody();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return campaigns;
+	}
+
 }
